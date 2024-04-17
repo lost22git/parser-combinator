@@ -1,0 +1,55 @@
+plugins {
+	id 'java-library'
+	id 'com.diffplug.spotless' version '6.25.0'
+}
+
+
+repositories {
+	mavenCentral()
+}
+
+
+group = "lost.parser.combinator"
+version = "0.0.1"
+
+
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.compilerArgs += ["--enable-preview"]
+}
+
+tasks.withType(JavaExec).configureEach {
+	it.jvmArgs += ["--enable-preview"]
+}
+
+tasks.withType(Test).configureEach {
+
+	useJUnitPlatform()
+	it.jvmArgs += ["--enable-preview"]
+}
+
+
+spotless {
+	java {
+		target 'src/main/java/**/*.java', 'src/test/java/**/*.java'
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		palantirJavaFormat()
+	}
+
+	groovyGradle {
+		greclipse()
+	}
+}
+
+
