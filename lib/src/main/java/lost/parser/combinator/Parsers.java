@@ -109,7 +109,7 @@ public class Parsers {
     /**
      * a byte parser
      */
-    public static Parser<Byte> abyte(byte expect) {
+    public static Parser<Byte> b(byte expect) {
         return input -> parse_a_byte(input, expect);
     }
 
@@ -128,7 +128,7 @@ public class Parsers {
     /**
      * a char parser
      */
-    public static Parser<Character> achar(char expect) {
+    public static Parser<Character> ch(char expect) {
         return input -> parse_a_char(input, expect);
     }
 
@@ -147,6 +147,31 @@ public class Parsers {
             throw new ParseError("parse a char error: expect " + expect + " but got " + actual);
         }
         return new ParseResult<>(expect, input);
+    }
+
+    /**
+     * a string parser
+     */
+    public static Parser<String> str(String expect) {
+        return input -> parse_str(input, expect);
+    }
+
+    private static ParseResult<String> parse_str(ByteBuffer input, String str) {
+        var begin = input.position();
+
+        var expect = str.getBytes();
+        int len = expect.length;
+
+        if (input.remaining() < len) throw new ParseError("parse str error");
+
+        for (byte b : expect) {
+            if (input.get() != b) {
+                input.position(begin);
+                throw new ParseError("parse str error");
+            }
+        }
+
+        return new ParseResult<>(str, input);
     }
 
     /**
